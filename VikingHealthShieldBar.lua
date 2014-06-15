@@ -1,5 +1,5 @@
 -----------------------------------------------------------------------------------------------
--- Client Lua Script for VikingHSB
+-- Client Lua Script for VikingHealthShieldBar
 -- Copyright (c) NCsoft. All rights reserved
 -----------------------------------------------------------------------------------------------
 require "Window"
@@ -9,16 +9,16 @@ require "Spell"
 require "Unit"
 require "Item"
 
-local VikingHSB = {}
+local VikingHealthShieldBar = {}
 
-function VikingHSB:new(o)
+function VikingHealthShieldBar:new(o)
     o = o or {}
     setmetatable(o, self)
     self.__index = self
     return o
 end
 
-function VikingHSB:Init()
+function VikingHealthShieldBar:Init()
     Apollo.RegisterAddon(self)
 end
 
@@ -32,14 +32,14 @@ local eEnduranceFlash =
 	EnduranceFlashThree = 4,
 }
 
-function VikingHSB:OnLoad() -- OnLoad then GetAsyncLoad then OnRestore
+function VikingHealthShieldBar:OnLoad() -- OnLoad then GetAsyncLoad then OnRestore
 	self.xmlDoc = XmlDoc.CreateFromFile("VikingHealthShieldBar.xml")
 	Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
 	self.xmlDoc:RegisterCallback("OnDocumentReady", self) 
 
 end
 
-function VikingHSB:OnDocumentReady()
+function VikingHealthShieldBar:OnDocumentReady()
 	if self.xmlDoc == nil or not self.xmlDoc:IsLoaded() or not g_InterfaceOptionsLoaded or self.wndMain then
 		return
 	end
@@ -73,7 +73,7 @@ function VikingHSB:OnDocumentReady()
 	self:OnFrameUpdate()
 end
 
-function VikingHSB:OnFrameUpdate()
+function VikingHealthShieldBar:OnFrameUpdate()
 	local unitPlayer = GameLib.GetPlayerUnit()
 	if unitPlayer == nil then
 		return
@@ -130,7 +130,7 @@ function VikingHSB:OnFrameUpdate()
 	end
 end
 
-function VikingHSB:UpdateEvades(nEvadeValue, nEvadeMax)
+function VikingHealthShieldBar:UpdateEvades(nEvadeValue, nEvadeMax)
 	local strSpriteFull = "spr_HUD_Dodge2"
 	local nMaxTick = math.floor(nEvadeMax/100)
 	local nMaxState = eEnduranceFlash.EnduranceFlashTwo
@@ -150,11 +150,11 @@ function VikingHSB:UpdateEvades(nEvadeValue, nEvadeMax)
 
 		if self.nEnduranceState ~= nMaxState then
 			self.nEnduranceState = nMaxState
-			self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("Dash: 2")
+			self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("2")
 		end
 	elseif math.floor(nEvadeValue/100) < 1 then -- none ready
 		
-		self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("Dash: 0")
+		self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("0")
 
 		if self.nEnduranceState ~= eEnduranceFlash.EnduranceFlashZero then
 			self.nEnduranceState = eEnduranceFlash.EnduranceFlashZero
@@ -168,7 +168,7 @@ function VikingHSB:UpdateEvades(nEvadeValue, nEvadeMax)
 				if self.nEnduranceState ~= eEnduranceFlash.EnduranceFlashTwo then
 					if self.nEnduranceState == eEnduranceFlash.EnduranceFlashThree then
 					
-						self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("Dash: 1")
+						self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("1")
 					else
 											end
 					self.nEnduranceState = eEnduranceFlash.EnduranceFlashTwo
@@ -176,10 +176,10 @@ function VikingHSB:UpdateEvades(nEvadeValue, nEvadeMax)
 			elseif nEvadeValue >= 100 and nEvadeValue < 200 then
 			-- ok works
 		
-				self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("Dash: 1")
+				self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("1")
 				if self.nEnduranceState ~= eEnduranceFlash.EnduranceFlashOne then
 			-- OK works
-					self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("Dash: 1")
+					self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("1")
 					self.nEnduranceState = eEnduranceFlash.EnduranceFlashOne
 				end
 			else
@@ -190,11 +190,11 @@ function VikingHSB:UpdateEvades(nEvadeValue, nEvadeMax)
 			if self.nEnduranceState == eEnduranceFlash.EnduranceFlashZero then
 				self.nEnduranceState = eEnduranceFlash.EnduranceFlashOne
 			
-				self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("Dash: 1")
+				self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("1")
 			elseif self.nEnduranceState == eEnduranceFlash.EnduranceFlashTwo then
 				self.nEnduranceState = eEnduranceFlash.EnduranceFlashOne
 				
-				self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("Dash: 1")
+				self.wndEndurance:FindChild("EvadeFlashSprite"):SetText("1")
 			end
 		end
 	end
@@ -206,25 +206,25 @@ function VikingHSB:UpdateEvades(nEvadeValue, nEvadeMax)
 	self.nLastEnduranceValue = nEvadeValue
 end
 
-function VikingHSB:OnEnteredCombat(unit, bInCombat)
+function VikingHealthShieldBar:OnEnteredCombat(unit, bInCombat)
 	if unit == GameLib.GetPlayerUnit() then
 		self.bInCombat = bInCombat
 	end
 end
 
-function VikingHSB:OnEnduranceDisplayTimer()
+function VikingHealthShieldBar:OnEnduranceDisplayTimer()
 	self.bEnduranceFadeTimer = false
 	self.wndEndurance:Show(false)
 end
 
-function VikingHSB:OnMouseButtonDown(wnd, wndControl, iButton, nX, nY, bDouble)
+function VikingHealthShieldBar:OnMouseButtonDown(wnd, wndControl, iButton, nX, nY, bDouble)
 	if iButton == 0 then -- Left Click
 		GameLib.SetTargetUnit(GameLib.GetPlayerUnit())
 	end
 	return true -- stop propogation
 end
 
-function VikingHSB:OnDisableDashToggle(wndHandler, wndControl)
+function VikingHealthShieldBar:OnDisableDashToggle(wndHandler, wndControl)
 	Apollo.SetConsoleVariable("player.doubleTapToDash", not wndControl:IsChecked())
 	self.wndEndurance:FindChild("EvadeDisabledBlocker"):Show(not wndControl:IsChecked())
 	self.wndEndurance:FindChild("EvadeProgress"):Show(not wndControl:IsChecked())
@@ -233,7 +233,7 @@ function VikingHSB:OnDisableDashToggle(wndHandler, wndControl)
 	
 end
 
-function VikingHSB:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
+function VikingHealthShieldBar:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
 	if eAnchor == GameLib.CodeEnumTutorialAnchor.DashMeter then
 		local tRect = {}
 		tRect.l, tRect.t, tRect.r, tRect.b = self.wndMain:GetRect()
@@ -253,5 +253,5 @@ function VikingHSB:OnTutorial_RequestUIAnchor(eAnchor, idTutorial, strPopupText)
 	end
 end
 
-local VikingHSBInst = VikingHSB:new()
-VikingHSBInst:Init()
+local VikingHealthShieldBarInst = VikingHealthShieldBar:new()
+VikingHealthShieldBarInst:Init()
