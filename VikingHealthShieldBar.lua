@@ -157,10 +157,8 @@ function VikingHealthShieldBar:UpdateEvades(nEvadeValue, nEvadeMax)
   for i = 1, nMaxTick do
     wndMarker         = self.wndEndurance:FindChild("Marker" .. i)
     wndMarkerProgress = wndMarker:FindChild('EvadeProgress')
-    Print(n)
     wndMarkerProgress:Show(i == n)
     wndMarker:Show(i < nMaxTick + 1)
-
 
     if i >= n + 1 then
       wndMarker:SetBGColor(tColors.yellow)
