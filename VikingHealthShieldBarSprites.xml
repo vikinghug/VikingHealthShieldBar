@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Sprites>
     <Sprite Name="DashIcon" Cycle="1">
-        <Frame Texture="VikingHealthShieldBar\assets\dashIcon.tga" x0="0" x1="32" x2="32" x3="32" x4="32" x5="32" y0="0" y1="32" y2="32" y3="32" y4="32" y5="32" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
+        <Frame Texture="VikingHealthShieldBar\assets\dashIcon.tga" x0="0" x1="26" x2="26" x3="26" x4="26" x5="26" y0="0" y1="8" y2="8" y3="8" y4="8" y5="8" HotspotX="0" HotspotY="0" Duration="1.000" StartColor="white" EndColor="white"/>
     </Sprite>
 </Sprites>

@@ -22,6 +22,19 @@ function VikingHealthShieldBar:Init()
     Apollo.RegisterAddon(self)
 end
 
+-- let's create some member variables
+local tColors = {
+  black       = ApolloColor.new("ff201e2d"),
+  white       = ApolloColor.new("ffffffff"),
+  lightGrey   = ApolloColor.new("ffbcb7da"),
+  green       = ApolloColor.new("cc06ff5e"),
+  yellow      = ApolloColor.new("ffffd161"),
+  lightPurple = ApolloColor.new("ff645f7e"),
+  purple      = ApolloColor.new("ff28253a"),
+  red         = ApolloColor.new("ffe05757"),
+  blue        = ApolloColor.new("cc49e8ee")
+}
+
 local knEvadeResource = 7 -- the resource hooked to dodges (TODO replace with enum)
 
 local eEnduranceFlash =
@@ -135,41 +148,32 @@ function VikingHealthShieldBar:UpdateEvades(nEvadeValue, nEvadeMax)
   local nMaxState = eEnduranceFlash.EnduranceFlashTwo
 
   local nEvadeCurr = math.floor(nEvadeValue/100) * 100
-  self.wndEndurance:FindChild("EvadeProgress"):SetMax(nEvadeMax)
-  self.wndEndurance:FindChild("EvadeProgress"):SetProgress(nEvadeCurr)
 
-
+  local nTickIndex = nEvadeCurr/100
   local nTickValue = nEvadeValue % 100 == 0 and 100 or nEvadeValue % 100
-  self.wndEndurance:FindChild("EvadeReloadProgress"):SetMax(100)
-  self.wndEndurance:FindChild("EvadeReloadProgress"):SetProgress(nTickValue)
 
-  local wndMarkers = {}
-  local tPos = {
-    nLeft  = 0,
-    nTop   = 0,
-    nRight = 16,
-    nBottom  = 16
-  }
-
-  tPos.nFrameLeft, tPos.nFrameTop, tPos.nFrameRight, tPos.nFrameBottom = self.wndEndurance:GetAnchorOffsets()
-  local nMaxWidth = math.abs(tPos.nFrameLeft - tPos.nFrameRight)
-  local nDividerOffset = math.ceil(nMaxWidth/nMaxTick)
+  local n = nMaxTick - nTickIndex
 
   for i = 1, nMaxTick do
+    wndMarker         = self.wndEndurance:FindChild("Marker" .. i)
+    wndMarkerProgress = wndMarker:FindChild('EvadeProgress')
+    Print(n)
+    wndMarkerProgress:Show(i == n)
+    wndMarker:Show(i < nMaxTick + 1)
 
-    wndMarkers[i] = self.wndEndurance:FindChild("Marker" .. i)
-    wndMarkers[i]:Show(true)
-    local nStart = nDividerOffset/nMaxTick * -1
-    if i == 1 then
-      nStart = nDividerOffset/nMaxTick
-    elseif i == nMaxTick then
-      nStart = nDividerOffset/nMaxTick * -1
+
+    if i >= n + 1 then
+      wndMarker:SetBGColor(tColors.yellow)
+    else
+      wndMarker:SetBGColor(tColors.purple)
     end
-    wndMarkers[i]:SetAnchorOffsets(nStart + tPos.nLeft + nDividerOffset*(i-1), tPos.nTop, nStart + tPos.nRight + nDividerOffset*(i-1), tPos.nBottom)
-  end
 
-  local wndDivider1 = self.wndEndurance:FindChild("Divider1")
-  local wndDivider2 = self.wndEndurance:FindChild("Divider2")
+    if i == n then
+      wndMarkerProgress:SetMax(100)
+      wndMarkerProgress:SetProgress(nTickValue)
+    end
+
+  end
 
   local strEvadeTooltop = Apollo.GetString(Apollo.GetConsoleVariable("player.doubleTapToDash") and "HealthBar_EvadeDoubleTapTooltip" or "HealthBar_EvadeKeyTooltip")
   local strDisplayTooltip = String_GetWeaselString(strEvadeTooltop, math.floor(nEvadeValue / 100), math.floor(nEvadeMax / 100))
