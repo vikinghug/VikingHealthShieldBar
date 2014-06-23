@@ -163,7 +163,7 @@ function VikingHealthShieldBar:UpdateEvades(nEvadeValue, nEvadeMax)
     if i >= n + 1 then
       wndMarker:SetBGColor(tColors.yellow)
     else
-      wndMarker:SetBGColor(tColors.purple)
+      wndMarker:SetBGColor(99141122)
     end
 
     if i == n then
