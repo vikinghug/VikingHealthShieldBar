@@ -19,7 +19,8 @@ function VikingHealthShieldBar:new(o)
 end
 
 function VikingHealthShieldBar:Init()
-    Apollo.RegisterAddon(self)
+  local tDependencies = { "VikingLibrary" }
+  Apollo.RegisterAddon(self, false, "", tDependencies)
 end
 
 -- let's create some member variables
@@ -50,7 +51,6 @@ function VikingHealthShieldBar:OnLoad() -- OnLoad then GetAsyncLoad then OnResto
   Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
   self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 
-  Apollo.LoadSprites("VikingHealthShieldBarSprites.xml")
 end
 
 function VikingHealthShieldBar:OnDocumentReady()
