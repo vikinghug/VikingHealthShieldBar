@@ -143,24 +143,16 @@ function VikingHealthShieldBar:OnFrameUpdate()
 end
 
 function VikingHealthShieldBar:UpdateEvades(nEvadeValue, nEvadeMax)
-  local strSpriteFull = "spr_HUD_Dodge2"
-  local nMaxTick = math.floor(nEvadeMax/100)
-  local nMaxState = eEnduranceFlash.EnduranceFlashTwo
+  local nTickValue = nEvadeValue % 100 == 0 and 0 or nEvadeValue % 100
 
-  local nEvadeCurr = math.floor(nEvadeValue/100) * 100
+  local n = nEvadeValue == 200 and 0 or nEvadeValue >= 100 and 1 or 2
 
-  local nTickIndex = nEvadeCurr/100
-  local nTickValue = nEvadeValue % 100 == 0 and 100 or nEvadeValue % 100
-
-  local n = nMaxTick - nTickIndex
-
-  for i = 1, nMaxTick do
+  for i = 1, 2 do
     wndMarker         = self.wndEndurance:FindChild("Marker" .. i)
     wndMarkerProgress = wndMarker:FindChild('EvadeProgress')
     wndMarkerProgress:Show(i == n)
-    wndMarker:Show(i < nMaxTick + 1)
 
-    if i >= n + 1 then
+    if i > n then
       wndMarker:SetBGColor(tColors.yellow)
     else
       wndMarker:SetBGColor(99141122)
@@ -173,8 +165,8 @@ function VikingHealthShieldBar:UpdateEvades(nEvadeValue, nEvadeMax)
 
   end
 
-  local strEvadeTooltop = Apollo.GetString(Apollo.GetConsoleVariable("player.doubleTapToDash") and "HealthBar_EvadeDoubleTapTooltip" or "HealthBar_EvadeKeyTooltip")
-  local strDisplayTooltip = String_GetWeaselString(strEvadeTooltop, math.floor(nEvadeValue / 100), math.floor(nEvadeMax / 100))
+  local strEvadeTooltip = Apollo.GetString(Apollo.GetConsoleVariable("player.doubleTapToDash") and "HealthBar_EvadeDoubleTapTooltip" or "HealthBar_EvadeKeyTooltip")
+  local strDisplayTooltip = String_GetWeaselString(strEvadeTooltip, math.floor(nEvadeValue / 100), math.floor(nEvadeMax / 100))
   self.wndEndurance:FindChild("EvadeFullSprite"):SetTooltip(strDisplayTooltip)
 
   self.nLastEnduranceValue = nEvadeValue
