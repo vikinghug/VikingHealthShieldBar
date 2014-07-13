@@ -143,9 +143,15 @@ function VikingHealthShieldBar:OnFrameUpdate()
 end
 
 function VikingHealthShieldBar:UpdateEvades(nEvadeValue, nEvadeMax)
-  local nTickValue = nEvadeValue % 100 == 0 and 0 or nEvadeValue % 100
+  local nTickValue = nEvadeValue % 100
 
-  local n = nEvadeValue == 200 and 0 or nEvadeValue >= 100 and 1 or 2
+  local n = 2
+
+  if nEvadeValue >= 200 then
+    n = 0
+  elseif nEvadeValue >= 100 then
+    n = 1
+  end
 
   for i = 1, 2 do
     wndMarker         = self.wndEndurance:FindChild("Marker" .. i)
