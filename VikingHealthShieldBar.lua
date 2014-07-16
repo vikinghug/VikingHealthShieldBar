@@ -67,10 +67,9 @@ function VikingHealthShieldBar:OnDocumentReady()
   Apollo.CreateTimer("HealthShieldBarTimer", 0.5, true)
   --Apollo.CreateTimer("EnduranceDisplayTimer", 30, false) --TODO: Fix(?) This is perma-killing the display when DT dashing is disabled via the toggle
 
-    self.wndMain = Apollo.LoadForm(self.xmlDoc, "VikingHealthShieldBarForm", "FixedHudStratum", self)
+  self.wndMain = Apollo.LoadForm(self.xmlDoc, "VikingHealthShieldBarForm", "FixedHudStratum", self)
 
   self.wndEndurance = self.wndMain:FindChild("EnduranceContainer")
-  -- self.wndDisableDash = self.wndEndurance:FindChild("DisableDashToggleContainer")
 
   self.bInCombat = false
   self.eEnduranceState = eEnduranceFlash.EnduranceFlashZero
@@ -101,13 +100,6 @@ function VikingHealthShieldBar:OnFrameUpdate()
   -- TODO: Store this and only update when needed
   local bShowDoubleTapToDash = Apollo.GetConsoleVariable("player.showDoubleTapToDash")
   local bSettingDoubleTapToDash = Apollo.GetConsoleVariable("player.doubleTapToDash")
-
-  -- self.wndDisableDash:Show(bShowDoubleTapToDash)
-  self.wndEndurance:FindChild("EvadeFlashSprite"):Show(bShowDoubleTapToDash and bSettingDoubleTapToDash)
-  self.wndEndurance:FindChild("EvadeDisabledBlocker"):Show(bShowDoubleTapToDash and not bSettingDoubleTapToDash)
-  -- self.wndDisableDash:FindChild("DisableDashToggleFlash"):Show(bShowDoubleTapToDash and not bSettingDoubleTapToDash)
-  -- self.wndDisableDash:FindChild("DisableDashToggle"):SetCheck(bShowDoubleTapToDash and not bSettingDoubleTapToDash)
-  -- self.wndDisableDash:SetTooltip(bSettingDoubleTapToDash and Apollo.GetString("HealthBar_DisableDoubleTapEvades") or Apollo.GetString("HealthBar_EnableDoubletapTooltip"))
 
   -- Show/Hide EnduranceEvade UI
   if self.bInCombat or nRunCurr ~= nRunMax or nEvadeCurr ~= nEvadeMax or bShowDoubleTapToDash then
@@ -168,7 +160,6 @@ function VikingHealthShieldBar:UpdateEvades(nEvadeValue, nEvadeMax)
 
   local strEvadeTooltip = Apollo.GetString(Apollo.GetConsoleVariable("player.doubleTapToDash") and "HealthBar_EvadeDoubleTapTooltip" or "HealthBar_EvadeKeyTooltip")
   local strDisplayTooltip = String_GetWeaselString(strEvadeTooltip, math.floor(nEvadeValue / 100), math.floor(nEvadeMax / 100))
-  self.wndEndurance:FindChild("EvadeFullSprite"):SetTooltip(strDisplayTooltip)
 
   self.nLastEnduranceValue = nEvadeValue
 end
@@ -193,9 +184,7 @@ end
 
 function VikingHealthShieldBar:OnDisableDashToggle(wndHandler, wndControl)
   Apollo.SetConsoleVariable("player.doubleTapToDash", not wndControl:IsChecked())
-  self.wndEndurance:FindChild("EvadeDisabledBlocker"):Show(not wndControl:IsChecked())
   self.wndEndurance:FindChild("EvadeProgress"):Show(not wndControl:IsChecked())
-  -- self.wndDisableDash:FindChild("DisableDashToggleFlash"):Show(not wndControl:IsChecked())
   self:OnFrameUpdate()
 end
 
