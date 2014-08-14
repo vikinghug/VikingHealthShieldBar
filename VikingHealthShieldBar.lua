@@ -51,6 +51,8 @@ function VikingHealthShieldBar:OnLoad() -- OnLoad then GetAsyncLoad then OnResto
   Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
   self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 
+  Apollo.RegisterEventHandler("WindowManagementReady"      , "OnWindowManagementReady"      , self)
+  Apollo.RegisterEventHandler("WindowManagementUpdate"     , "OnWindowManagementUpdate"     , self)
 end
 
 function VikingHealthShieldBar:OnDocumentReady()
@@ -66,6 +68,8 @@ function VikingHealthShieldBar:OnDocumentReady()
 
   Apollo.CreateTimer("HealthShieldBarTimer", 0.5, true)
   --Apollo.CreateTimer("EnduranceDisplayTimer", 30, false) --TODO: Fix(?) This is perma-killing the display when DT dashing is disabled via the toggle
+
+
 
   self.wndMain = Apollo.LoadForm(self.xmlDoc, "VikingHealthShieldBarForm", "FixedHudStratum", self)
 
@@ -84,6 +88,20 @@ function VikingHealthShieldBar:OnDocumentReady()
   self.xmlDoc = nil
   self:OnFrameUpdate()
 end
+
+function VikingHealthShieldBar:OnWindowManagementReady()
+  Event_FireGenericEvent("WindowManagementAdd", { wnd = self.wndMain, strName = "Viking DashBar"} )
+end
+
+function VikingHealthShieldBar:OnWindowManagementUpdate(tWindow)
+  if tWindow and tWindow.wnd and tWindow.wnd == self.wndMain then
+    local bMoveable = tWindow.wnd:IsStyleOn("Moveable")
+
+    tWindow.wnd:SetStyle("RequireMetaKeyToMove", bMoveable)
+    tWindow.wnd:SetStyle("IgnoreMouse", not bMoveable)
+  end
+end
+
 
 function VikingHealthShieldBar:OnFrameUpdate()
   local unitPlayer = GameLib.GetPlayerUnit()
