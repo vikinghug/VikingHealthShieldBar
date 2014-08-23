@@ -51,6 +51,8 @@ function VikingHealthShieldBar:OnLoad() -- OnLoad then GetAsyncLoad then OnResto
   Apollo.RegisterEventHandler("InterfaceOptionsLoaded", "OnDocumentReady", self)
   self.xmlDoc:RegisterCallback("OnDocumentReady", self)
 
+  Apollo.RegisterEventHandler("WindowManagementReady"      , "OnWindowManagementReady"      , self)
+  Apollo.RegisterEventHandler("WindowManagementUpdate"     , "OnWindowManagementUpdate"     , self)
 end
 
 function VikingHealthShieldBar:OnDocumentReady()
@@ -66,6 +68,8 @@ function VikingHealthShieldBar:OnDocumentReady()
 
   Apollo.CreateTimer("HealthShieldBarTimer", 0.5, true)
   --Apollo.CreateTimer("EnduranceDisplayTimer", 30, false) --TODO: Fix(?) This is perma-killing the display when DT dashing is disabled via the toggle
+
+
 
   self.wndMain = Apollo.LoadForm(self.xmlDoc, "VikingHealthShieldBarForm", "FixedHudStratum", self)
 
@@ -84,6 +88,20 @@ function VikingHealthShieldBar:OnDocumentReady()
   self.xmlDoc = nil
   self:OnFrameUpdate()
 end
+
+function VikingHealthShieldBar:OnWindowManagementReady()
+  Event_FireGenericEvent("WindowManagementAdd", { wnd = self.wndMain, strName = "Viking DashBar"} )
+end
+
+function VikingHealthShieldBar:OnWindowManagementUpdate(tWindow)
+  if tWindow and tWindow.wnd and tWindow.wnd == self.wndMain then
+    local bMoveable = tWindow.wnd:IsStyleOn("Moveable")
+
+    tWindow.wnd:SetStyle("RequireMetaKeyToMove", bMoveable)
+    tWindow.wnd:SetStyle("IgnoreMouse", not bMoveable)
+  end
+end
+
 
 function VikingHealthShieldBar:OnFrameUpdate()
   local unitPlayer = GameLib.GetPlayerUnit()
@@ -135,9 +153,15 @@ function VikingHealthShieldBar:OnFrameUpdate()
 end
 
 function VikingHealthShieldBar:UpdateEvades(nEvadeValue, nEvadeMax)
-  local nTickValue = nEvadeValue % 100 == 0 and 0 or nEvadeValue % 100
+  local nTickValue = nEvadeValue % 100
 
-  local n = nEvadeValue == 200 and 0 or nEvadeValue >= 100 and 1 or 2
+  local n = 2
+
+  if nEvadeValue >= 200 then
+    n = 0
+  elseif nEvadeValue >= 100 then
+    n = 1
+  end
 
   for i = 1, 2 do
     wndMarker         = self.wndEndurance:FindChild("Marker" .. i)
